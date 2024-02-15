@@ -26,7 +26,7 @@ app.get("/api/hello", (req, res) => {
 });
 
 // Define route handler for /api/:date?
-app.get("/api/:date?", (req, res) => {
+app.get("/api/:date?", function (req, res) {
   // Get the date parameter from the request
   const dateParam = req.params.date;
 
@@ -38,6 +38,15 @@ app.get("/api/:date?", (req, res) => {
     return;
   }
 
+  // Check if dateParam is a valid Unix timestamp (i.e., a number)
+  if (!isNaN(dateParam)) {
+    const unixTimestamp = parseInt(dateParam);
+    const utcString = new Date(unixTimestamp).toUTCString();
+    res.json({ unix: unixTimestamp, utc: utcString });
+    return;
+  }
+
+  // Otherwise, attempt to parse the date string
   const inputDate = new Date(dateParam);
 
   // Check if the inputDate is valid
